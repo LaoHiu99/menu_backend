@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { LoginDto } from './dto/login.dto';
+import { UpdateProfileDto } from './dto/update-profile.dto';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
@@ -65,7 +66,53 @@ export class UserService {
         userId: user.userId,
         nickname: user.nickname,
         avatarUrl: user.avatarUrl,
+        signature: user.signature,
       }
+    };
+  }
+
+  async getProfile(userId: string) {
+    const user = await this.userRepository.findOne({ where: { userId } });
+    
+    if (!user) {
+      throw new Error('用户不存在');
+    }
+    
+    return {
+      id: user.id,
+      userId: user.userId,
+      nickname: user.nickname,
+      avatarUrl: user.avatarUrl,
+      signature: user.signature,
+      phone: user.phone,
+      status: user.status,
+      createdAt: user.createdAt,
+    };
+  }
+
+  async updateProfile(userId: string, updateProfileDto: UpdateProfileDto) {
+    const user = await this.userRepository.findOne({ where: { userId } });
+    
+    if (!user) {
+      throw new Error('用户不存在');
+    }
+    
+    if (updateProfileDto.nickname !== undefined) {
+      user.nickname = updateProfileDto.nickname;
+    }
+    
+    if (updateProfileDto.signature !== undefined) {
+      user.signature = updateProfileDto.signature;
+    }
+    
+    await this.userRepository.save(user);
+    
+    return {
+      id: user.id,
+      userId: user.userId,
+      nickname: user.nickname,
+      avatarUrl: user.avatarUrl,
+      signature: user.signature,
     };
   }
 }

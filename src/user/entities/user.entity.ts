@@ -39,6 +39,15 @@ export class User {
     avatarUrl: string;
 
     @Column({
+        name: 'signature',
+        length: 200,
+        comment: '个性签名',
+        nullable: true,
+        default: ''
+    })
+    signature: string;
+
+    @Column({
         name: 'phone',
         length: 20,
         comment: '手机号',
