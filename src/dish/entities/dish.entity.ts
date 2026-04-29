@@ -1,5 +1,5 @@
-import { Category } from "src/category/entities/category.entity";
-import { OrderItem } from "src/order-item/entities/order-item.entity";
+import { Category } from "../../category/entities/category.entity";
+import { OrderItem } from "../../order-item/entities/order-item.entity";
 import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn, JoinColumn } from "typeorm";
 
 @Entity({
@@ -9,11 +9,6 @@ export class Dish {
 
     @PrimaryGeneratedColumn()
     id: number;
-
-    @Column({
-        comment: '所属分类ID'
-    })
-    categoryId: number;
 
     @Column({
         length: 100,
@@ -32,7 +27,8 @@ export class Dish {
         type: 'decimal',
         precision: 10,
         scale: 2,
-        comment: '价格'
+        comment: '价格',
+        default: 0
     })
     price: number;
 
@@ -51,13 +47,6 @@ export class Dish {
     })
     status: number;
 
-    @Column({
-        type: 'int',
-        comment: '排序权重',
-        default: 0
-    })
-    sortOrder: number;
-
     @CreateDateColumn({
         name: 'created_at'
     })
@@ -68,10 +57,10 @@ export class Dish {
     })
     updatedAt: Date;
 
-    @ManyToOne('Category', 'dishes')
+    @ManyToOne(() => Category, category => category.dishes)
     @JoinColumn({ name: 'category_id' })
     category: Category;
 
-    @OneToMany('OrderItem', 'dish')
+    @OneToMany(() => OrderItem, orderItem => orderItem.dish)
     orderItems: OrderItem[];
 }

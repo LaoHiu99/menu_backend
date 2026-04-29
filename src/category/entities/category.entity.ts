@@ -1,4 +1,4 @@
-import { Dish } from "src/dish/entities/dish.entity";
+import { Dish } from "../../dish/entities/dish.entity";
 import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity({
@@ -14,13 +14,6 @@ export class Category {
         comment: '分类名称（如：热销推荐、经典川菜）'
     })
     title: string;
-
-    @Column({
-        type: 'int',
-        comment: '排序权重',
-        default: 0
-    })
-    sortOrder: number;
 
     @Column({
         type: 'tinyint',
@@ -39,6 +32,6 @@ export class Category {
     })
     updatedAt: Date;
 
-    @OneToMany('Dish', 'category')
+    @OneToMany(() => Dish, dish => dish.category)
     dishes: Dish[];
 }

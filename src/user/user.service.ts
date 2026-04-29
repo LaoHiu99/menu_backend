@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
+import { Order } from '../order/entities/order.entity';
 import { LoginDto } from './dto/login.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { JwtService } from '@nestjs/jwt';
@@ -13,6 +14,8 @@ export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    @InjectRepository(Order)
+    private readonly orderRepository: Repository<Order>,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
   ) {}
@@ -78,6 +81,9 @@ export class UserService {
       throw new Error('用户不存在');
     }
     
+    const pendingCount = await this.orderRepository.count({ where: { userId: user.id, status: 0 } });
+    const completedCount = await this.orderRepository.count({ where: { userId: user.id, status: 1 } });
+    
     return {
       id: user.id,
       userId: user.userId,
@@ -87,6 +93,11 @@ export class UserService {
       phone: user.phone,
       status: user.status,
       createdAt: user.createdAt,
+      orderCount: {
+        pending: pendingCount,
+        completed: completedCount,
+        total: pendingCount + completedCount,
+      },
     };
   }
 

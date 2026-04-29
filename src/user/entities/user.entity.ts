@@ -1,4 +1,5 @@
 import { Order } from "src/order/entities/order.entity";
+import { Friend } from "src/friend/entities/friend.entity";
 import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity({
@@ -79,4 +80,7 @@ export class User {
 
     @OneToMany('Order', 'user')
     orders: Order[];
+
+    @OneToMany('Friend', 'user')
+    friendRelations: Friend[];
 }

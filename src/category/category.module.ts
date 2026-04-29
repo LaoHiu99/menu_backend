@@ -1,11 +1,14 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { Category } from './entities/category.entity';
+import { Dish } from '../dish/entities/dish.entity';
 import { CategoryService } from './category.service';
 import { CategoryController } from './category.controller';
-import { Category } from './entities/category.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Category])],
+  imports: [
+    TypeOrmModule.forFeature([Category, Dish]), // 必须同时注册 Category 和 Dish
+  ],
   controllers: [CategoryController],
   providers: [CategoryService],
   exports: [CategoryService],
