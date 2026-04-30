@@ -33,8 +33,8 @@ export class User {
 
     @Column({
         name: 'avatar_url',
-        length: 200,
-        comment: '头像地址',
+        length: 512,
+        comment: '头像地址（相对路径如 /uploads/xxx 或完整 URL）',
         nullable: true
     })
     avatarUrl: string;

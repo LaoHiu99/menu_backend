@@ -43,6 +43,13 @@ export class FriendService {
       if (existingRequest.status === 0) {
         throw new Error('已发送好友请求，请等待对方确认');
       }
+      if (existingRequest.status === 2) {
+        existingRequest.userId = user.id;
+        existingRequest.friendId = friend.id;
+        existingRequest.status = 0;
+        await this.friendRepository.save(existingRequest);
+        return { message: '好友请求已发送' };
+      }
     }
 
     const friendRequest = this.friendRepository.create({
@@ -68,7 +75,13 @@ export class FriendService {
       order: { createdAt: 'DESC' },
     });
 
-    return requests;
+    return requests.map((r) => ({
+      id: r.id,
+      userId: r.user?.userId ?? '',
+      nickname: r.user?.nickname ?? '',
+      avatarUrl: r.user?.avatarUrl ?? '',
+      createdAt: r.createdAt,
+    }));
   }
 
   async acceptFriendRequest(requestId: number, userId: string) {
@@ -93,12 +106,22 @@ export class FriendService {
     request.status = 1;
     await this.friendRepository.save(request);
 
-    const reverseFriend = this.friendRepository.create({
-      userId: request.friendId,
-      friendId: request.userId,
-      status: 1,
+    let reverse = await this.friendRepository.findOne({
+      where: {
+        userId: request.friendId,
+        friendId: request.userId,
+      },
     });
-    await this.friendRepository.save(reverseFriend);
+    if (!reverse) {
+      reverse = this.friendRepository.create({
+        userId: request.friendId,
+        friendId: request.userId,
+        status: 1,
+      });
+    } else {
+      reverse.status = 1;
+    }
+    await this.friendRepository.save(reverse);
 
     return { message: '已接受好友请求' };
   }
@@ -140,16 +163,28 @@ export class FriendService {
       order: { createdAt: 'DESC' },
     });
 
-    return friends;
+    return friends.map((f) => ({
+      id: f.id,
+      friendUserId: f.friend?.userId ?? '',
+      nickname: f.friend?.nickname ?? '',
+      avatarUrl: f.friend?.avatarUrl ?? '',
+    }));
   }
 
-  async removeFriend(friendId: number, userId: string) {
-    const user = await this.userRepository.findOne({ where: { userId } });
+  async removeFriendByBusinessUserId(
+    currentBusinessUserId: string,
+    friendBusinessUserId: string,
+  ) {
+    const user = await this.userRepository.findOne({
+      where: { userId: currentBusinessUserId },
+    });
     if (!user) {
       throw new Error('用户不存在');
     }
 
-    const friend = await this.userRepository.findOne({ where: { id: friendId } });
+    const friend = await this.userRepository.findOne({
+      where: { userId: friendBusinessUserId },
+    });
     if (!friend) {
       throw new Error('好友不存在');
     }

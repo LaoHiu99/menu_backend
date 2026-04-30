@@ -105,11 +105,16 @@ export class OrderService {
         const items = await this.orderItemRepository.find({
           where: { orderId: order.id },
         });
-        return {
+        const row = {
           ...order,
           items,
         };
-      })
+        if (order.userId === user.id) {
+          row.username = user.nickname;
+          row.avatar = user.avatarUrl ?? '';
+        }
+        return row;
+      }),
     );
 
     return {

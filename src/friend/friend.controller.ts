@@ -31,8 +31,15 @@ export class FriendController {
     return await this.friendService.getFriendList(userId);
   }
 
-  @Delete(':friendId')
-  async removeFriend(@Param('friendId') friendId: string, @Query('userId') userId: string) {
-    return await this.friendService.removeFriend(+friendId, userId);
+  /** friendUserId 为业务用户编号，如 USER1777451236548（与添加好友时输入的一致） */
+  @Delete('user/:friendUserId')
+  async removeFriend(
+    @Param('friendUserId') friendUserId: string,
+    @Query('userId') userId: string,
+  ) {
+    return await this.friendService.removeFriendByBusinessUserId(
+      userId,
+      friendUserId,
+    );
   }
 }
