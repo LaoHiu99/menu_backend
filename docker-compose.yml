@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  # NestJS 后端服务
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: menu_backend
+    restart: always
+    environment:
+      PORT: ${PORT:-3001}
+      DB_HOST: ${DB_HOST:-121.5.38.196}
+      DB_PORT: ${DB_PORT:-43306}
+      DB_USERNAME: ${DB_USERNAME:-root}
+      DB_PASSWORD: ${DB_PASSWORD:-sangon@He}
+      DB_DATABASE: ${DB_DATABASE:-menu_system}
+      JWT_SECRET: ${JWT_SECRET:-your-super-secret-jwt-key-change-in-production}
+    ports:
+      - "3001:3001"
+    volumes:
+      - uploads_data:/app/uploads
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3001"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  uploads_data:
