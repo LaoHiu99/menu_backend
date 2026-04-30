@@ -2,7 +2,6 @@ import { Controller, Post, Body, Get, Param, Put, Delete, Query } from '@nestjs/
 import { OrderService } from './order.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderStatusDto } from './dto/update-order-status.dto';
-
 @Controller('order')
 export class OrderController {
   constructor(private readonly orderService: OrderService) {}

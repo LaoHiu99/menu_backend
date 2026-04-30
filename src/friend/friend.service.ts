@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Friend } from './entities/friend.entity';
@@ -15,18 +15,23 @@ export class FriendService {
   ) {}
 
   async sendFriendRequest(sendFriendRequestDto: SendFriendRequestDto) {
-    const user = await this.userRepository.findOne({ where: { userId: sendFriendRequestDto.userId } });
-    if (!user) {
-      throw new Error('用户不存在');
+    const friendUserId = sendFriendRequestDto.friendUserId?.trim() ?? '';
+    if (!friendUserId) {
+      throw new BadRequestException('请输入好友ID');
     }
 
-    const friend = await this.userRepository.findOne({ where: { userId: sendFriendRequestDto.friendUserId } });
+    const user = await this.userRepository.findOne({ where: { userId: sendFriendRequestDto.userId } });
+    if (!user) {
+      throw new BadRequestException('用户不存在');
+    }
+
+    const friend = await this.userRepository.findOne({ where: { userId: friendUserId } });
     if (!friend) {
-      throw new Error('好友不存在');
+      throw new BadRequestException('该用户不存在，请核对好友ID');
     }
 
     if (user.id === friend.id) {
-      throw new Error('不能添加自己为好友');
+      throw new BadRequestException('不能添加自己为好友');
     }
 
     const existingRequest = await this.friendRepository.findOne({
@@ -38,10 +43,10 @@ export class FriendService {
 
     if (existingRequest) {
       if (existingRequest.status === 1) {
-        throw new Error('已经是好友了');
+        throw new BadRequestException('已经是好友了');
       }
       if (existingRequest.status === 0) {
-        throw new Error('已发送好友请求，请等待对方确认');
+        throw new BadRequestException('已发送好友请求，请等待对方确认');
       }
       if (existingRequest.status === 2) {
         existingRequest.userId = user.id;
@@ -66,7 +71,7 @@ export class FriendService {
   async getFriendRequests(userId: string) {
     const user = await this.userRepository.findOne({ where: { userId } });
     if (!user) {
-      throw new Error('用户不存在');
+      throw new BadRequestException('用户不存在');
     }
 
     const requests = await this.friendRepository.find({
@@ -87,20 +92,20 @@ export class FriendService {
   async acceptFriendRequest(requestId: number, userId: string) {
     const user = await this.userRepository.findOne({ where: { userId } });
     if (!user) {
-      throw new Error('用户不存在');
+      throw new BadRequestException('用户不存在');
     }
 
     const request = await this.friendRepository.findOne({ where: { id: requestId } });
     if (!request) {
-      throw new Error('好友请求不存在');
+      throw new BadRequestException('好友请求不存在');
     }
 
     if (request.friendId !== user.id) {
-      throw new Error('无权操作此好友请求');
+      throw new BadRequestException('无权操作此好友请求');
     }
 
     if (request.status !== 0) {
-      throw new Error('该请求已处理');
+      throw new BadRequestException('该请求已处理');
     }
 
     request.status = 1;
@@ -129,20 +134,20 @@ export class FriendService {
   async rejectFriendRequest(requestId: number, userId: string) {
     const user = await this.userRepository.findOne({ where: { userId } });
     if (!user) {
-      throw new Error('用户不存在');
+      throw new BadRequestException('用户不存在');
     }
 
     const request = await this.friendRepository.findOne({ where: { id: requestId } });
     if (!request) {
-      throw new Error('好友请求不存在');
+      throw new BadRequestException('好友请求不存在');
     }
 
     if (request.friendId !== user.id) {
-      throw new Error('无权操作此好友请求');
+      throw new BadRequestException('无权操作此好友请求');
     }
 
     if (request.status !== 0) {
-      throw new Error('该请求已处理');
+      throw new BadRequestException('该请求已处理');
     }
 
     request.status = 2;
@@ -154,7 +159,7 @@ export class FriendService {
   async getFriendList(userId: string) {
     const user = await this.userRepository.findOne({ where: { userId } });
     if (!user) {
-      throw new Error('用户不存在');
+      throw new BadRequestException('用户不存在');
     }
 
     const friends = await this.friendRepository.find({
@@ -179,14 +184,14 @@ export class FriendService {
       where: { userId: currentBusinessUserId },
     });
     if (!user) {
-      throw new Error('用户不存在');
+      throw new BadRequestException('用户不存在');
     }
 
     const friend = await this.userRepository.findOne({
       where: { userId: friendBusinessUserId },
     });
     if (!friend) {
-      throw new Error('好友不存在');
+      throw new BadRequestException('好友不存在');
     }
 
     await this.friendRepository.delete({ userId: user.id, friendId: friend.id });
@@ -198,7 +203,7 @@ export class FriendService {
   async getFriendIds(userId: string) {
     const user = await this.userRepository.findOne({ where: { userId } });
     if (!user) {
-      throw new Error('用户不存在');
+      throw new BadRequestException('用户不存在');
     }
 
     const friends = await this.friendRepository.find({

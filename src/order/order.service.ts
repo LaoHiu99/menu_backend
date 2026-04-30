@@ -108,6 +108,7 @@ export class OrderService {
         const row = {
           ...order,
           items,
+          isMine: order.userId === user.id,
         };
         if (order.userId === user.id) {
           row.username = user.nickname;
