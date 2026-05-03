@@ -47,6 +47,14 @@ export class Dish {
     })
     status: number;
 
+    @Column({
+        name: 'sort_order',
+        type: 'int',
+        comment: '排序权重，越小越靠前（分类内菜品列表顺序）',
+        default: 0
+    })
+    sortOrder: number;
+
     @CreateDateColumn({
         name: 'created_at'
     })

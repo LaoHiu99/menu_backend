@@ -23,6 +23,7 @@ services:
       - menu_network
 
   backend:
+    image: menu_backend:1.0.0
     build:
       context: .
       dockerfile: Dockerfile

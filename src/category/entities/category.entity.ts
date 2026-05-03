@@ -30,6 +30,14 @@ export class Category {
     })
     status: number;
 
+    @Column({
+        name: 'sort_order',
+        type: 'int',
+        comment: '排序权重，越小越靠前（小程序侧边栏顺序）',
+        default: 0
+    })
+    sortOrder: number;
+
     @CreateDateColumn({
         name: 'created_at'
     })

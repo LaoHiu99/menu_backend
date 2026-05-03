@@ -17,6 +17,11 @@ export class CategoryController {
     return await this.categoryService.findAll();
   }
 
+  @Get('manage')
+  async findAllForAdmin() {
+    return await this.categoryService.findAllForAdmin();
+  }
+
   @Get(':id')
   async findOne(@Param('id') id: string) {
     return await this.categoryService.findOne(+id);

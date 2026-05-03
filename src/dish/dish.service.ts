@@ -27,6 +27,7 @@ export class DishService {
       price: createDishDto.price ?? 0,
       imageUrl: createDishDto.imageUrl,
       status: createDishDto.status ?? 1,
+      sortOrder: createDishDto.sortOrder ?? 0,
     });
     return await this.dishRepository.save(dish);
   }
@@ -48,6 +49,7 @@ export class DishService {
     if (updateDishDto.price !== undefined) dish.price = updateDishDto.price;
     if (updateDishDto.imageUrl !== undefined) dish.imageUrl = updateDishDto.imageUrl;
     if (updateDishDto.status !== undefined) dish.status = updateDishDto.status;
+    if (updateDishDto.sortOrder !== undefined) dish.sortOrder = updateDishDto.sortOrder;
     return await this.dishRepository.save(dish);
   }
 
@@ -61,13 +63,26 @@ export class DishService {
     return { message: '删除成功' };
   }
 
+  /** 后台列表：含下架菜品，可按分类筛选 */
+  async findAll(categoryId?: number) {
+    const where =
+      categoryId != null && !Number.isNaN(categoryId)
+        ? { category: { id: categoryId } }
+        : {};
+    return await this.dishRepository.find({
+      where,
+      relations: ['category'],
+      order: { sortOrder: 'ASC', id: 'ASC' },
+    });
+  }
+
   async search(keyword: string) {
     return await this.dishRepository.find({
       where: [
         { name: Like(`%${keyword}%`), status: 1 },
         { description: Like(`%${keyword}%`), status: 1 },
       ],
-      order: { createdAt: 'DESC' },
+      order: { sortOrder: 'ASC', id: 'ASC' },
     });
   }
 }
