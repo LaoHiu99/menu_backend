@@ -56,3 +56,5 @@ pids
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 menu_backend.zip
 menu-backend.tar
+uploads/
+*.tar

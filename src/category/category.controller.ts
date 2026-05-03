@@ -18,8 +18,8 @@ export class CategoryController {
   }
 
   @Get('manage')
-  async findAllForManage() {
-    return await this.categoryService.findAll();
+  async findAllForAdmin() {
+    return await this.categoryService.findAllForAdmin();
   }
 
   @Get(':id')

@@ -5,4 +5,5 @@ export class UpdateDishDto {
   price?: number;
   imageUrl?: string;
   status?: number;
+  sortOrder?: number;
 }

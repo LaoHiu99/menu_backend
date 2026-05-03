@@ -5,4 +5,6 @@ export class CreateDishDto {
   price?: number;
   imageUrl?: string;
   status?: number;
+  /** 越小越靠前 */
+  sortOrder?: number;
 }
