@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(tar -czf menu_backend.tar.gz --exclude='node_modules' --exclude='dist' --exclude='.git' --exclude='uploads' --exclude='menu_backend.tar.gz' .)",
+      "Bash(tar -czf ../menu_backend.tar.gz --exclude='node_modules' --exclude='dist' --exclude='.git' --exclude='uploads' --exclude='menu_backend.tar.gz' --exclude='*.tar.gz' .)",
+      "Bash(sshpass -p \"Liuhao@123\" scp -o StrictHostKeyChecking=no d:/develop/coco/menu_backend.tar.gz root@101.132.138.79:/root/)"
+    ]
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o PasswordAuthentication=no root@101.132.138.79 \"echo connected\")",
+      "Bash(apt-get install *)",
+      "Bash(python3 -c \"import paramiko; print\\('paramiko ok'\\)\")",
+      "Bash(where scp *)",
+      "Read(//c/WINDOWS/System32/OpenSSH/**)",
+      "Bash(python -c \"import paramiko; print\\('ok'\\)\")",
+      "Bash(python -c ' *)",
+      "Read(//c/Users/hehan/.ssh/**)",
+      "Bash(ssh -o StrictHostKeyChecking=no root@101.132.138.79 \"echo 'key auth OK' && hostnamectl\")",
+      "Bash(ssh root@101.132.138.79 \"ls -la /root/menu_backend.tar.gz && echo '---' && ls /root/menu_backend/ 2>/dev/null || echo 'menu_backend dir not exists'\")",
+      "Bash(ssh root@101.132.138.79)",
+      "Bash(ssh root@101.132.138.79 \"cd /root/menu_backend && docker compose up -d --build\")"
+    ]
+  }
+}
