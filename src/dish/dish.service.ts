@@ -61,6 +61,18 @@ export class DishService {
     return { message: '删除成功' };
   }
 
+  async findAll(categoryId?: number) {
+    const where: any = { status: 1 };
+    if (categoryId) {
+      where.category = { id: categoryId };
+    }
+    return await this.dishRepository.find({
+      where,
+      relations: ['category'],
+      order: { createdAt: 'DESC' },
+    });
+  }
+
   async search(keyword: string) {
     return await this.dishRepository.find({
       where: [
