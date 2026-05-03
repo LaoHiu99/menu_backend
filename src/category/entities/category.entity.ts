@@ -16,6 +16,14 @@ export class Category {
     title: string;
 
     @Column({
+        name: 'parent_id',
+        type: 'int',
+        nullable: true,
+        comment: '父分类 id，为空表示一级分组或独立类目（二级挂在父级下）'
+    })
+    parentId: number | null;
+
+    @Column({
         type: 'tinyint',
         comment: '状态：0-禁用，1-启用',
         default: 1

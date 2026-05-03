@@ -26,7 +26,8 @@ export class CategoryService {
       .createQueryBuilder('category')
       .leftJoinAndSelect('category.dishes', 'dish')
       .where('category.status = :status', { status: 1 })
-      .orderBy('category.id', 'ASC')
+      .orderBy('category.parent_id', 'ASC')
+      .addOrderBy('category.id', 'ASC')
       .getMany();
     
     categories.forEach(category => {

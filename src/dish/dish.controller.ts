@@ -24,6 +24,6 @@ export class DishController {
 
   @Get('search')
   async search(@Query('keyword') keyword: string) {
-    return await this.dishService.search(keyword);
+    return await this.dishService.search(keyword)
   }
 }
