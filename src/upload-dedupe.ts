@@ -113,12 +113,14 @@ async function findPerceptualDuplicateInUploads(
 
 /**
  * 1) 字节完全一致 → 复用已有 SHA256 文件名。
- * 2) 与 uploads 内任一已有图片感知一致 → 删除临时文件并复用该文件名（解决「换头像后再选旧图」产生重复文件）。
+ * 2)（可选）与 uploads 内任一已有图片感知一致 → 删除临时文件并复用该文件名（头像场景）。
  * 3) 否则按 SHA256 新文件名落盘。
  */
 export async function replaceWithContentAddressedFile(
   tempDiskPath: string,
   mimetype: string,
+  /** 头像等场景：允许「视觉上相同」即复用已有文件；菜品图应传 false，避免误判成别的图 */
+  perceptualDedupe = true,
 ): Promise<string> {
   const buf = await readFile(tempDiskPath);
   const exactHash = createHash('sha256').update(buf).digest('hex');
@@ -131,10 +133,12 @@ export async function replaceWithContentAddressedFile(
     return exactName;
   }
 
-  const perceptualDup = await findPerceptualDuplicateInUploads(buf, tempDiskPath);
-  if (perceptualDup) {
-    await unlink(tempDiskPath);
-    return perceptualDup;
+  if (perceptualDedupe) {
+    const perceptualDup = await findPerceptualDuplicateInUploads(buf, tempDiskPath);
+    if (perceptualDup) {
+      await unlink(tempDiskPath);
+      return perceptualDup;
+    }
   }
 
   try {
